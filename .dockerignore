@@ -1,0 +1,14 @@
+.git
+.husky
+.dockerignore
+.gitignore
+.lintstagedrc
+.prettierrc
+
+Dockerfile.dev
+docker-compose.dev.yaml
+eslint.config.mjs
+tsconfig.json
+
+/node_modules
+/dist
