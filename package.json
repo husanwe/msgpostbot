@@ -1,4 +1,7 @@
 {
   "name": "msgpostbot",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "prettier": "3.8.1"
+  }
 }
