@@ -1,16 +1,13 @@
-import { Bot, Context, session, SessionFlavor } from "grammy";
+import { Bot } from "grammy";
 
-import { redisStorage } from "./db.js";
 import { env } from "./env.js";
+import {
+  ChatContext as PrivateContext,
+  privateChat
+} from "./private/composer.js";
 
-interface SessionData {
-  __language_code: string;
-}
-
-type BotContext = Context & SessionFlavor<SessionData>;
+type BotContext = PrivateContext;
 
 export const bot = new Bot<BotContext>(env.BOT_TOKEN);
 
-bot.use(session({ initial: () => ({}), storage: redisStorage }));
-
-bot.command("start", (ctx) => ctx.reply("Welcome!"));
+bot.chatType("private", privateChat);
