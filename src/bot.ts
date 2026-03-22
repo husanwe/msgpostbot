@@ -1,5 +1,7 @@
 import { Bot } from "grammy";
 
-export const bot = new Bot(process.env.BOT_TOKEN || "");
+import { env } from "./env.js";
+
+export const bot = new Bot(env.BOT_TOKEN);
 
 bot.command("start", (ctx) => ctx.reply("Welcome!"));
