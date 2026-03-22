@@ -1,1 +1,1 @@
-start = Xush kelibsiz!
+start-cmd = Xush kelibsiz!

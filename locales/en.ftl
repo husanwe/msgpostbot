@@ -1,1 +1,1 @@
-start = Welcome!
+start-cmd = Welcome!

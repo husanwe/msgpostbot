@@ -2,6 +2,7 @@ import { I18nFlavor } from "@grammyjs/i18n";
 import { Composer, Context, lazySession, SessionFlavor } from "grammy";
 
 import { redisStorage } from "../db.js";
+import { startCmd } from "./handler.js";
 import { i18n } from "./i18n.js";
 import { createMsg, Msg } from "./message.js";
 
@@ -27,6 +28,4 @@ privateChat.use((ctx, next) => {
   return next();
 });
 
-privateChat.command("start", async (ctx) => {
-  await ctx.reply(ctx.text.start());
-});
+privateChat.command("start", startCmd);
