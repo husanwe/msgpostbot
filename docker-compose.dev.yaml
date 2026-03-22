@@ -6,6 +6,10 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       BOT_TOKEN: ${BOT_TOKEN}
+      REDIS_URL: redis://default:${REDIS_PASSWORD}@redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
     develop:
       watch:
         - path: ./package.json
@@ -15,3 +19,19 @@ services:
         - path: ./
           target: /app
           action: sync
+
+  redis:
+    image: redis:8-alpine
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 6379:6379
+
+volumes:
+  redis_data:
