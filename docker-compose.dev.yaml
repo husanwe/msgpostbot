@@ -27,7 +27,7 @@ services:
       - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 3
     ports:

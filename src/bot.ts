@@ -1,12 +1,9 @@
 import { Bot } from "grammy";
 
 import { env } from "./env.js";
-import {
-  ChatContext as PrivateContext,
-  privateChat
-} from "./private/composer.js";
+import { ChatContext, privateChat } from "./private/composer.js";
 
-type BotContext = PrivateContext;
+type BotContext = ChatContext;
 
 export const bot = new Bot<BotContext>(env.BOT_TOKEN);
 

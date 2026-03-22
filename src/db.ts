@@ -5,4 +5,6 @@ import { env } from "./env.js";
 
 const redis = new Redis(env.REDIS_URL);
 
-export const redisStorage = new RedisAdapter({ instance: redis });
+export const redisStorage = <T>() => {
+  return new RedisAdapter<T>({ instance: redis });
+};
