@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN}
     develop:
       watch:
         - path: ./package.json

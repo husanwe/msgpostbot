@@ -6,9 +6,13 @@
     "start": "node dist/index.js",
     "dev:compose:up": "docker compose -f docker-compose.dev.yaml watch",
     "dev:compose:down": "docker compose -f docker-compose.dev.yaml down -v",
+    "dev:compose:logs": "docker compose -f docker-compose.dev.yaml logs -f",
     "lint": "eslint --fix .",
     "format": "prettier --ignore-unknown --write .",
     "prepare": "husky"
+  },
+  "dependencies": {
+    "grammy": "^1.41.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
