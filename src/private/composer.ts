@@ -3,18 +3,23 @@ import {
   conversations,
   createConversation
 } from "@grammyjs/conversations";
-import { I18nFlavor } from "@grammyjs/i18n";
-import { hears } from "@grammyjs/i18n";
+import { hears, I18nFlavor } from "@grammyjs/i18n";
 import { Composer, Context, lazySession, LazySessionFlavor } from "grammy";
 
 import { redisStorage } from "../db.js";
-import { langConvo, langHears, postMsg, startCmd } from "./handler.js";
+import {
+  langConvo,
+  langHears,
+  postConvo,
+  postMsg,
+  startCmd
+} from "./handler.js";
 import { i18n } from "./i18n.js";
 import { createMsg, Msg } from "./message.js";
 
 interface SessionData {
   __language_code?: string;
-  selectingLang: boolean;
+  messages: number[];
 }
 
 export type BaseChatContext = Context &
@@ -27,7 +32,7 @@ export const privateChat = new Composer<ChatContext>();
 
 privateChat.use(
   lazySession<SessionData, ChatContext>({
-    initial: () => ({ selectingLang: true }),
+    initial: () => ({ messages: [] }),
     storage: redisStorage()
   })
 );
@@ -38,6 +43,7 @@ privateChat.use((ctx, next) => {
 });
 privateChat.use(conversations());
 privateChat.use(createConversation(langConvo));
+privateChat.use(createConversation(postConvo));
 
 privateChat.filter(hears("lang-label"), langHears);
 privateChat.command("start", startCmd);

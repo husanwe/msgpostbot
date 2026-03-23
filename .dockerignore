@@ -1,10 +1,11 @@
 .git
 .husky
 .dockerignore
+.env
+.env.example
 .gitignore
 .lintstagedrc
 .prettierrc
-.env.example
 
 Dockerfile.dev
 docker-compose.dev.yaml

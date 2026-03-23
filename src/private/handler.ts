@@ -6,6 +6,7 @@ import {
   Middleware
 } from "grammy";
 
+import { env } from "../env.js";
 import { BaseChatContext, ChatContext } from "./composer.js";
 
 type HearsHandler = HearsMiddleware<ChatContext>;
@@ -13,24 +14,18 @@ type CommandHandler = CommandMiddleware<ChatContext>;
 type PostHandler = Middleware<ChatContext>;
 type ConvoBuilder = ConversationBuilder<ChatContext, BaseChatContext>;
 
-export const langHears: HearsHandler = async (ctx, next) => {
-  const { selectingLang } = await ctx.session;
-
-  if (!selectingLang) {
-    return next();
-  }
-
+export const langHears: HearsHandler = async (ctx) => {
   await ctx.conversation.enter("langConvo");
 };
 
 export const startCmd: CommandHandler = async (ctx) => {
-  const session = await ctx.session;
-  session.selectingLang = true;
-
   const langLabel = ctx.text.langLabel();
   const langKeyboard = new Keyboard().text(langLabel).resized().oneTime();
 
-  await ctx.reply(ctx.text.startMsg(), { reply_markup: langKeyboard });
+  await ctx.reply(ctx.text.startMsg(), {
+    reply_markup: langKeyboard,
+    parse_mode: "HTML"
+  });
 };
 
 export const langConvo: ConvoBuilder = async (convo, ctx) => {
@@ -73,9 +68,70 @@ export const langConvo: ConvoBuilder = async (convo, ctx) => {
 
 export const postMsg: PostHandler = async (ctx) => {
   const session = await ctx.session;
-  session.selectingLang = false;
+  session.messages = [ctx.message!.message_id];
 
-  await ctx.reply(String(ctx.update.update_id), {
-    reply_markup: { remove_keyboard: true }
+  const readyKeyboard = new Keyboard()
+    .text(ctx.text.readyButton())
+    .resized()
+    .oneTime();
+
+  await ctx.reply(ctx.text.msgReceived(), { reply_markup: readyKeyboard });
+  await ctx.conversation.enter("postConvo");
+};
+
+export const postConvo: ConvoBuilder = async (convo, ctx) => {
+  const readyLabel = await convo.external((ctx) => ctx.text.readyButton());
+  const receivedText = await convo.external((ctx) => ctx.text.msgReceived());
+  const readyKeyboard = new Keyboard().text(readyLabel).resized().oneTime();
+
+  while (true) {
+    const msg = await convo.waitFor("message");
+
+    if (msg.message.text === readyLabel) break;
+
+    await convo.external(async (ctx) => {
+      (await ctx.session).messages.push(msg.message.message_id);
+    });
+
+    await msg.reply(receivedText, { reply_markup: readyKeyboard });
+  }
+
+  const messages = await convo.external(
+    async (ctx) => (await ctx.session).messages
+  );
+
+  const summaryText = await convo.external((ctx) =>
+    ctx.text.summary(messages.length)
+  );
+  const sendLabel = await convo.external((ctx) => ctx.text.sendButton());
+  const cancelLabel = await convo.external((ctx) => ctx.text.cancelButton());
+  const actionKeyboard = new Keyboard()
+    .text(sendLabel)
+    .text(cancelLabel)
+    .resized()
+    .oneTime();
+
+  await ctx.reply(summaryText, { reply_markup: actionKeyboard });
+  await ctx.api.copyMessages(ctx.chat!.id, ctx.chat!.id, messages);
+
+  const action = await convo.form.select([sendLabel, cancelLabel], {
+    otherwise: async (ctx) => {
+      await ctx.reply(ctx.text.chooseAction(), {
+        reply_markup: actionKeyboard
+      });
+    }
+  });
+
+  if (action === sendLabel) {
+    await ctx.api.copyMessages(env.GROUP_ID, ctx.chat!.id, messages);
+    const sentText = await convo.external((ctx) => ctx.text.sent());
+    await ctx.reply(sentText);
+  } else {
+    const canceledText = await convo.external((ctx) => ctx.text.canceled());
+    await ctx.reply(canceledText);
+  }
+
+  await convo.external(async (ctx) => {
+    (await ctx.session).messages = [];
   });
 };
