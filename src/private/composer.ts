@@ -22,11 +22,9 @@ interface SessionData {
   messages: number[];
 }
 
-export type BaseChatContext = Context &
+export type ChatContext = ConversationFlavor<Context> &
   LazySessionFlavor<SessionData> &
   I18nFlavor & { text: Msg };
-
-export type ChatContext = ConversationFlavor<BaseChatContext>;
 
 export const privateChat = new Composer<ChatContext>();
 

@@ -16,7 +16,11 @@ msg-received = 💬 Message received
 ready-button = ✅ Ready
 send-button = 🚀 Send
 cancel-button = ❌ Cancel
-summary = 📝 You sent {$numOfMsgs} messages:
+summary =
+  📝 You sent { NUMBER($numOfMsgs) ->
+    [one] {$numOfMsgs} message
+    *[other] {$numOfMsgs} messages
+  }:
 sent = ✅ Sent
 canceled = ❌ Canceled
 choose-action = 👇 Please choose an option

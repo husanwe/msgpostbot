@@ -1,18 +1,19 @@
 import { ConversationBuilder } from "@grammyjs/conversations";
 import {
   CommandMiddleware,
+  Context,
   HearsMiddleware,
   Keyboard,
   Middleware
 } from "grammy";
 
 import { env } from "../env.js";
-import { BaseChatContext, ChatContext } from "./composer.js";
+import { ChatContext } from "./composer.js";
 
 type HearsHandler = HearsMiddleware<ChatContext>;
 type CommandHandler = CommandMiddleware<ChatContext>;
 type PostHandler = Middleware<ChatContext>;
-type ConvoBuilder = ConversationBuilder<ChatContext, BaseChatContext>;
+type ConvoBuilder = ConversationBuilder<ChatContext, Context>;
 
 export const langHears: HearsHandler = async (ctx) => {
   await ctx.conversation.enter("langConvo");
@@ -85,15 +86,15 @@ export const postConvo: ConvoBuilder = async (convo, ctx) => {
   const readyKeyboard = new Keyboard().text(readyLabel).resized().oneTime();
 
   while (true) {
-    const msg = await convo.waitFor("message");
+    const msgCtx = await convo.waitFor("message");
 
-    if (msg.message.text === readyLabel) break;
+    if (msgCtx.message.text === readyLabel) break;
 
     await convo.external(async (ctx) => {
-      (await ctx.session).messages.push(msg.message.message_id);
+      (await ctx.session).messages.push(msgCtx.message.message_id);
     });
 
-    await msg.reply(receivedText, { reply_markup: readyKeyboard });
+    await msgCtx.reply(receivedText, { reply_markup: readyKeyboard });
   }
 
   const messages = await convo.external(
@@ -116,7 +117,10 @@ export const postConvo: ConvoBuilder = async (convo, ctx) => {
 
   const action = await convo.form.select([sendLabel, cancelLabel], {
     otherwise: async (ctx) => {
-      await ctx.reply(ctx.text.chooseAction(), {
+      const chooseActionText = await convo.external((ctx) =>
+        ctx.text.chooseAction()
+      );
+      await ctx.reply(chooseActionText, {
         reply_markup: actionKeyboard
       });
     }
