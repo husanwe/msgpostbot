@@ -7,6 +7,10 @@
     "dev:compose:up": "docker compose -f docker-compose.dev.yaml watch",
     "dev:compose:down": "docker compose -f docker-compose.dev.yaml down -v",
     "dev:compose:logs": "docker compose -f docker-compose.dev.yaml logs -f",
+    "prod:compose:pull": "docker compose -f docker-compose.prod.yaml pull",
+    "prod:compose:up": "docker compose -f docker-compose.prod.yaml up",
+    "prod:compose:down": "docker compose -f docker-compose.prod.yaml down",
+    "prod:compose:logs": "docker compose -f docker-compose.prod.yaml logs",
     "lint": "eslint --fix .",
     "format": "prettier --ignore-unknown --write .",
     "prepare": "husky"

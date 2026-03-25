@@ -1,6 +1,6 @@
 FROM node:24-alpine
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 COPY . .
 CMD [ "npx", "tsx", "watch", "--clear-screen=false", "src/index.ts" ]

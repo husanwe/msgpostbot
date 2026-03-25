@@ -129,10 +129,10 @@ export const postConvo: ConvoBuilder = async (convo, ctx) => {
   if (action === sendLabel) {
     await ctx.api.copyMessages(env.GROUP_ID, ctx.chat!.id, messages);
     const sentText = await convo.external((ctx) => ctx.text.sent());
-    await ctx.reply(sentText);
+    await ctx.reply(sentText, { reply_markup: { remove_keyboard: true } });
   } else {
     const canceledText = await convo.external((ctx) => ctx.text.canceled());
-    await ctx.reply(canceledText);
+    await ctx.reply(canceledText, { reply_markup: { remove_keyboard: true } });
   }
 
   await convo.external(async (ctx) => {

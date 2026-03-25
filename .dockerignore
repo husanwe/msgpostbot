@@ -1,4 +1,5 @@
 .git
+.github
 .husky
 .dockerignore
 .env
@@ -7,10 +8,11 @@
 .lintstagedrc
 .prettierrc
 
-Dockerfile.dev
-docker-compose.dev.yaml
-eslint.config.mjs
-tsconfig.json
-
 /node_modules
 /dist
+
+Dockerfile.dev
+Dockerfile.prod
+docker-compose.dev.yaml
+docker-compose.prod.yaml
+eslint.config.mjs
