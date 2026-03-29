@@ -1,6 +1,6 @@
 services:
   msgpostbot:
-    image: ghcr.io/husan-eshonqulov/msgpostbot:${IMAGE_TAG}
+    image: ghcr.io/husanwe/msgpostbot:${IMAGE_TAG}
     environment:
       BOT_TOKEN: ${BOT_TOKEN}
       REDIS_URL: redis://default:${REDIS_PASSWORD}@redis:6379/0
