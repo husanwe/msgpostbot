@@ -1,5 +1,5 @@
 services:
-  msgpostbot:
+  bot:
     image: msgpostbot
     build:
       context: .

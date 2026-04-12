@@ -1,5 +1,16 @@
 services:
-  msgpostbot:
+  swag:
+    image: linuxserver/swag
+    environment:
+      - URL=${DOMAIN_NAME}
+    volumes:
+      - ./swag:/config
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+
+  bot:
     image: ghcr.io/husanwe/msgpostbot:${IMAGE_TAG}
     environment:
       BOT_TOKEN: ${BOT_TOKEN}
