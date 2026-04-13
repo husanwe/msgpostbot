@@ -9,4 +9,4 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/locales ./locales
-CMD [ "node", "dist/index.js" ]
+CMD [ "node", "dist/webhook.js" ]
