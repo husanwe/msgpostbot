@@ -4,7 +4,7 @@ services:
     environment:
       - URL=${DOMAIN_NAME}
     volumes:
-      - ./swag:/config
+      - ./nginx.conf:/config/nginx/proxy-confs/msgpost.subdomain.conf
     ports:
       - 80:80
       - 443:443
@@ -16,6 +16,7 @@ services:
       BOT_TOKEN: ${BOT_TOKEN}
       REDIS_URL: redis://default:${REDIS_PASSWORD}@redis:6379/0
       GROUP_ID: ${GROUP_ID}
+      DOMAIN_NAME: ${DOMAIN_NAME}
     depends_on:
       redis:
         condition: service_healthy
