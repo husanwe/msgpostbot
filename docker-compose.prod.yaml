@@ -1,10 +1,15 @@
 services:
   swag:
     image: linuxserver/swag
+    cap_add:
+      - NET_ADMIN
     environment:
+      - PUID=1000
+      - PGID=1000
       - URL=${DOMAIN_NAME}
+      - VALIDATION=http
     volumes:
-      - ./nginx.conf:/config/nginx/proxy-confs/msgpost.subdomain.conf
+      - ./swag:/config
     ports:
       - 80:80
       - 443:443
